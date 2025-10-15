@@ -13,7 +13,6 @@ import logging
 import sys
 
 import click
-
 from stac_fastapi.sfeos_helpers.database import add_bbox_shape_to_collection
 from stac_fastapi.sfeos_helpers.mappings import COLLECTIONS_INDEX
 
