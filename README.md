@@ -2,6 +2,22 @@
 
 CLI tools for managing [stac-fastapi-elasticsearch-opensearch](https://github.com/stac-utils/stac-fastapi-elasticsearch-opensearch) deployments.
 
+<!-- markdownlint-disable MD033 MD041 -->
+
+
+<p align="left">
+  <img src="https://raw.githubusercontent.com/stac-utils/stac-fastapi-elasticsearch-opensearch/refs/heads/main/assets/sfeos.png" width=1000>
+</p>
+
+<!-- **Jump to:** [Project Introduction](#project-introduction---what-is-sfeos) | [Quick Start](#quick-start) | [Table of Contents](#table-of-contents) -->
+
+  [![Downloads](https://static.pepy.tech/badge/sfeos-tools?color=blue)](https://pepy.tech/project/sfeos-tools)
+  [![GitHub contributors](https://img.shields.io/github/contributors/healy-hyperspatial/sfeos-tools?color=blue)](https://github.com/healy-hyperspatial/sfeos-tools/graphs/contributors)
+  [![GitHub stars](https://img.shields.io/github/stars/healy-hyperspatial/sfeos-tools.svg?color=blue)](https://github.com/healy-hyperspatial/sfeos-tools/stargazers)
+  [![GitHub forks](https://img.shields.io/github/forks/healy-hyperspatial/sfeos-tools.svg?color=blue)](https://github.com/healy-hyperspatial/sfeos-tools/network/members)
+   [![PyPI version](https://img.shields.io/pypi/v/sfeos-tools.svg?color=blue)](https://pypi.org/project/sfeos-tools/)
+  [![STAC](https://img.shields.io/badge/STAC-1.1.0-blue.svg)](https://github.com/radiantearth/stac-spec/tree/v1.1.0)
+
 ## Table of Contents
 
 - [Installation](#installation)
