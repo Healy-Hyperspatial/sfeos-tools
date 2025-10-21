@@ -6,6 +6,17 @@ The format is (loosely) based on [Keep a Changelog](http://keepachangelog.com/) 
 
 ## [Unreleased]
 
+## [v0.1.1] - 2025-10-21
+
+### Changed
+
+- Moved `add_bbox_shape` logic from `cli.py` to new `bbox_shape.py` module for better code organization
+
+### Added
+
+- Comprehensive test suite for `bbox_shape` module with 9 test cases covering both Elasticsearch and OpenSearch backends
+- Added `pytest-asyncio` to dev dependencies for async test support
+
 ## [v0.1.0] - 2025-10-15
 
 ### Added
