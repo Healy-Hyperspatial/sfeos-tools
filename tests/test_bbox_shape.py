@@ -1,7 +1,8 @@
 """Tests for bbox_shape module."""
 
-import pytest
 from unittest.mock import AsyncMock, MagicMock, patch
+
+import pytest
 
 from sfeos_tools.bbox_shape import process_collection_bbox_shape, run_add_bbox_shape
 
@@ -145,11 +146,17 @@ class TestRunAddBboxShape:
                 "hits": [
                     {
                         "_id": "collection-1",
-                        "_source": {"id": "collection-1", "bbox": [[-180, -90, 180, 90]]},
+                        "_source": {
+                            "id": "collection-1",
+                            "bbox": [[-180, -90, 180, 90]],
+                        },
                     },
                     {
                         "_id": "collection-2",
-                        "_source": {"id": "collection-2", "bbox": [[-180, -90, 180, 90]]},
+                        "_source": {
+                            "id": "collection-2",
+                            "bbox": [[-180, -90, 180, 90]],
+                        },
                     },
                 ],
             }
@@ -180,7 +187,10 @@ class TestRunAddBboxShape:
                 "hits": [
                     {
                         "_id": "collection-1",
-                        "_source": {"id": "collection-1", "bbox": [[-180, -90, 180, 90]]},
+                        "_source": {
+                            "id": "collection-1",
+                            "bbox": [[-180, -90, 180, 90]],
+                        },
                     },
                 ],
             }
@@ -211,15 +221,24 @@ class TestRunAddBboxShape:
                 "hits": [
                     {
                         "_id": "collection-1",
-                        "_source": {"id": "collection-1", "bbox": [[-180, -90, 180, 90]]},
+                        "_source": {
+                            "id": "collection-1",
+                            "bbox": [[-180, -90, 180, 90]],
+                        },
                     },
                     {
                         "_id": "collection-2",
-                        "_source": {"id": "collection-2", "bbox": [[-180, -90, 180, 90]]},
+                        "_source": {
+                            "id": "collection-2",
+                            "bbox": [[-180, -90, 180, 90]],
+                        },
                     },
                     {
                         "_id": "collection-3",
-                        "_source": {"id": "collection-3", "bbox": [[-180, -90, 180, 90]]},
+                        "_source": {
+                            "id": "collection-3",
+                            "bbox": [[-180, -90, 180, 90]],
+                        },
                     },
                 ],
             }
