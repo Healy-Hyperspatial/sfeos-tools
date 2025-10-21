@@ -10,14 +10,17 @@ The format is (loosely) based on [Keep a Changelog](http://keepachangelog.com/) 
 
 ### Changed
 
-- Moved `add_bbox_shape` logic from `cli.py` to new `bbox_shape.py` module for better code organization
+- Moved `add_bbox_shape` logic from `cli.py` to new `bbox_shape.py` module for better code organization [#1](https://github.com/healy-hyperspatial/sfeos-tools/pull/1)
 
 ### Added
 
-- Comprehensive test suite for `bbox_shape` module with 9 test cases covering both Elasticsearch and OpenSearch backends
-- Added `pytest-asyncio` to dev dependencies for async test support
+- Comprehensive test suite for `bbox_shape` module with 9 test cases covering both Elasticsearch and OpenSearch backends [#1](https://github.com/healy-hyperspatial/sfeos-tools/pull/1)
 
-## [v0.1.0] - 2025-10-15
+### Removed
+
+- Python 3.8 support [#1](https://github.com/healy-hyperspatial/sfeos-tools/pull/1)
+
+## [v0.1.0] - 2025-10-15 [#1](https://github.com/healy-hyperspatial/sfeos-tools/pull/1)
 
 ### Added
 
