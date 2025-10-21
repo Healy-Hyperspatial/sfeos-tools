@@ -44,14 +44,14 @@ Source = "https://github.com/Healy-Hyperspatial/sfeos-tools"
 
 [project.optional-dependencies]
 elasticsearch = [
-    "stac-fastapi-elasticsearch",
+    "stac-fastapi-elasticsearch>=6.6.0",
 ]
 opensearch = [
-    "stac-fastapi-opensearch",
+    "stac-fastapi-opensearch>=6.6.0",
 ]
 dev = [
-    "stac-fastapi-elasticsearch",
-    "stac-fastapi-opensearch",
+    "stac-fastapi-elasticsearch>=6.6.0",
+    "stac-fastapi-opensearch>=6.6.0",
     # Development tools
     "pytest>=6.0",
     "pytest-asyncio>=0.21.0",
