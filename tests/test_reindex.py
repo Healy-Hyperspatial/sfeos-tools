@@ -1,6 +1,5 @@
 """Tests for reindex module."""
 
-import asyncio
 from unittest.mock import AsyncMock, MagicMock, Mock, patch
 
 import pytest
@@ -20,12 +19,14 @@ def _consume_coroutine(coro):
 
 def _consume_coroutine_with_exception(exception):
     """Helper that consumes coroutine and raises exception (for error tests)."""
+
     def _side_effect(coro):
         try:
             coro.close()
         except (StopIteration, RuntimeError, GeneratorExit):
             pass
         raise exception
+
     return _side_effect
 
 
@@ -124,7 +125,7 @@ class TestReindexSingleIndex:
         mock_client.options = Mock(return_value=mock_options)
         mock_client.indices.create.return_value = {"acknowledged": True}
         mock_client.reindex.return_value = {"task": "task-123"}
-        
+
         # Simulate task not completed, then completed
         mock_client.tasks.get.side_effect = [
             {"completed": False},
@@ -205,7 +206,7 @@ class TestRun:
             {"collections-000001": {"aliases": ["collections"]}},
             {"items-test-collection-000001": {"aliases": ["items-test-collection"]}},
         ]
-        
+
         mock_client.search.return_value = {
             "hits": {
                 "hits": [
@@ -247,7 +248,7 @@ class TestRun:
         mock_client.indices.get_alias.side_effect = [
             {"collections-000001": {"aliases": ["collections"]}},
         ]
-        
+
         mock_client.search.return_value = {"hits": {"hits": []}}
 
         mock_options = Mock()
@@ -285,7 +286,7 @@ class TestRun:
             {"items-collection1-000001": {"aliases": ["items-collection1"]}},
             {"items-collection2-000001": {"aliases": ["items-collection2"]}},
         ]
-        
+
         mock_client.search.return_value = {
             "hits": {
                 "hits": [
@@ -325,7 +326,7 @@ class TestRun:
         mock_client.indices.get_alias.side_effect = [
             {"collections-000005": {"aliases": ["collections"]}},
         ]
-        
+
         mock_client.search.return_value = {"hits": {"hits": []}}
 
         mock_options = Mock()
@@ -370,7 +371,9 @@ class TestRun:
         ), patch(
             "stac_fastapi.elasticsearch.database_logic.create_index_templates",
             new_callable=AsyncMock,
-        ), pytest.raises(Exception, match="Connection error"):
+        ), pytest.raises(
+            Exception, match="Connection error"
+        ):
             await run("elasticsearch")
 
         mock_client.close.assert_called_once()
@@ -382,8 +385,10 @@ class TestCLIReindex:
     def test_cli_reindex_elasticsearch_success(self):
         """Test CLI reindex command with Elasticsearch backend."""
         runner = CliRunner()
-        
-        with patch("sfeos_tools.cli.asyncio.run", side_effect=_consume_coroutine) as mock_asyncio_run:
+
+        with patch(
+            "sfeos_tools.cli.asyncio.run", side_effect=_consume_coroutine
+        ) as mock_asyncio_run:
             result = runner.invoke(
                 cli,
                 [
@@ -401,8 +406,10 @@ class TestCLIReindex:
     def test_cli_reindex_opensearch_success(self):
         """Test CLI reindex command with OpenSearch backend."""
         runner = CliRunner()
-        
-        with patch("sfeos_tools.cli.asyncio.run", side_effect=_consume_coroutine) as mock_asyncio_run:
+
+        with patch(
+            "sfeos_tools.cli.asyncio.run", side_effect=_consume_coroutine
+        ) as mock_asyncio_run:
             result = runner.invoke(
                 cli,
                 [
@@ -420,7 +427,7 @@ class TestCLIReindex:
     def test_cli_reindex_with_connection_options(self):
         """Test CLI reindex command with connection options."""
         runner = CliRunner()
-        
+
         with patch("sfeos_tools.cli.asyncio.run") as mock_asyncio_run, patch.dict(
             "os.environ", {}, clear=True
         ):
@@ -457,7 +464,7 @@ class TestCLIReindex:
     def test_cli_reindex_requires_confirmation(self):
         """Test CLI reindex command requires confirmation without --yes flag."""
         runner = CliRunner()
-        
+
         # Simulate user declining confirmation
         result = runner.invoke(
             cli,
@@ -471,8 +478,10 @@ class TestCLIReindex:
     def test_cli_reindex_accepts_confirmation(self):
         """Test CLI reindex command proceeds with user confirmation."""
         runner = CliRunner()
-        
-        with patch("sfeos_tools.cli.asyncio.run", side_effect=_consume_coroutine) as mock_asyncio_run:
+
+        with patch(
+            "sfeos_tools.cli.asyncio.run", side_effect=_consume_coroutine
+        ) as mock_asyncio_run:
             result = runner.invoke(
                 cli,
                 ["reindex", "--backend", "elasticsearch"],
@@ -486,9 +495,11 @@ class TestCLIReindex:
     def test_cli_reindex_handles_error(self):
         """Test CLI reindex command handles errors gracefully."""
         runner = CliRunner()
-        
-        with patch("sfeos_tools.cli.asyncio.run", side_effect=_consume_coroutine_with_exception(Exception("Reindex failed"))) as mock_asyncio_run:
-            
+
+        with patch(
+            "sfeos_tools.cli.asyncio.run",
+            side_effect=_consume_coroutine_with_exception(Exception("Reindex failed")),
+        ):
             result = runner.invoke(
                 cli,
                 ["reindex", "--backend", "elasticsearch", "--yes"],
@@ -501,9 +512,13 @@ class TestCLIReindex:
     def test_cli_reindex_handles_ssl_error(self):
         """Test CLI reindex command provides SSL error hint."""
         runner = CliRunner()
-        
-        with patch("sfeos_tools.cli.asyncio.run", side_effect=_consume_coroutine_with_exception(Exception("TLS verification failed"))) as mock_asyncio_run:
-            
+
+        with patch(
+            "sfeos_tools.cli.asyncio.run",
+            side_effect=_consume_coroutine_with_exception(
+                Exception("TLS verification failed")
+            ),
+        ):
             result = runner.invoke(
                 cli,
                 ["reindex", "--backend", "elasticsearch", "--yes"],
@@ -517,9 +532,13 @@ class TestCLIReindex:
     def test_cli_reindex_handles_connection_error(self):
         """Test CLI reindex command provides connection error hint."""
         runner = CliRunner()
-        
-        with patch("sfeos_tools.cli.asyncio.run", side_effect=_consume_coroutine_with_exception(Exception("Connection refused"))) as mock_asyncio_run:
-            
+
+        with patch(
+            "sfeos_tools.cli.asyncio.run",
+            side_effect=_consume_coroutine_with_exception(
+                Exception("Connection refused")
+            ),
+        ):
             result = runner.invoke(
                 cli,
                 ["reindex", "--backend", "elasticsearch", "--yes"],
@@ -533,9 +552,11 @@ class TestCLIReindex:
     def test_cli_reindex_handles_keyboard_interrupt(self):
         """Test CLI reindex command handles keyboard interrupt."""
         runner = CliRunner()
-        
-        with patch("sfeos_tools.cli.asyncio.run", side_effect=_consume_coroutine_with_exception(KeyboardInterrupt())) as mock_asyncio_run:
-            
+
+        with patch(
+            "sfeos_tools.cli.asyncio.run",
+            side_effect=_consume_coroutine_with_exception(KeyboardInterrupt()),
+        ):
             result = runner.invoke(
                 cli,
                 ["reindex", "--backend", "elasticsearch", "--yes"],

@@ -1,8 +1,6 @@
 """Tests for data_loader module."""
 
 import json
-import tempfile
-from pathlib import Path
 from unittest.mock import MagicMock, Mock, patch
 
 import click
