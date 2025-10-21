@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "sfeos-tools"
-version = "0.1.0"
+version = "0.1.1"
 description = "CLI tools for managing stac-fastapi-elasticsearch-opensearch deployments"
 readme = "README.md"
 authors = [
@@ -21,11 +21,12 @@ classifiers = [
     "Intended Audience :: Developers",
     "Intended Audience :: Science/Research",
     "License :: OSI Approved :: MIT License",
-    "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
     "Topic :: Scientific/Engineering",
     "Topic :: Scientific/Engineering :: GIS",
     "Topic :: Software Development :: Libraries :: Python Modules"
@@ -42,16 +43,17 @@ Source = "https://github.com/Healy-Hyperspatial/sfeos-tools"
 
 [project.optional-dependencies]
 elasticsearch = [
-    "stac-fastapi-elasticsearch",
+    "stac-fastapi-elasticsearch>=6.6.0",
 ]
 opensearch = [
-    "stac-fastapi-opensearch",
+    "stac-fastapi-opensearch>=6.6.0",
 ]
 dev = [
-    "stac-fastapi-elasticsearch",
-    "stac-fastapi-opensearch",
+    "stac-fastapi-elasticsearch>=6.6.0",
+    "stac-fastapi-opensearch>=6.6.0",
     # Development tools
     "pytest>=6.0",
+    "pytest-asyncio>=0.21.0",
     "pytest-cov>=2.0",
     "black>=21.0",
     "isort>=5.0",
@@ -79,7 +81,11 @@ line_length = 88
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 python_files = "test_*.py"
-addopts = "-v --cov=sfeos_tool --cov-report=term-missing"
+addopts = "-v --cov=sfeos_tools --cov-report=term-missing"
+asyncio_mode = "auto"
+filterwarnings = [
+    "ignore::DeprecationWarning:pydantic._internal._config",
+]
 
 [tool.coverage.report]
 exclude_lines = [

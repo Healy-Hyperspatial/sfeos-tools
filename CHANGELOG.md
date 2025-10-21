@@ -6,11 +6,26 @@ The format is (loosely) based on [Keep a Changelog](http://keepachangelog.com/) 
 
 ## [Unreleased]
 
-## [v0.1.0] - 2025-10-15
+## [v0.1.1] - 2025-10-21
+
+### Changed
+
+- Moved `add_bbox_shape` logic from `cli.py` to new `bbox_shape.py` module for better code organization [#1](https://github.com/healy-hyperspatial/sfeos-tools/pull/1)
+
+### Added
+
+- Comprehensive test suite for `bbox_shape` module with 9 test cases covering both Elasticsearch and OpenSearch backends [#1](https://github.com/healy-hyperspatial/sfeos-tools/pull/1)
+
+### Removed
+
+- Python 3.8 support [#1](https://github.com/healy-hyperspatial/sfeos-tools/pull/1)
+
+## [v0.1.0] - 2025-10-15 [#1](https://github.com/healy-hyperspatial/sfeos-tools/pull/1)
 
 ### Added
 
 - Initial release
 
-[Unreleased]: https://github.com/healy-hyperspatial/sfeos-tools/compare/v0.1.0..main
-[v0.1.0]: https://github.com/healy-hyperspatial/sfeos-tools/releases/tag/v0.1.0
+[Unreleased]: https://github.com/healy-hyperspatial/sfeos-tools/compare/v0.1.1..main
+[v0.1.1]: https://github.com/healy-hyperspatial/sfeos-tools/compare/v0.1.0...v0.1.1
+[v0.1.0]: https://github.com/healy-hyperspatial/sfeos-tools/compare/v0.1.0
