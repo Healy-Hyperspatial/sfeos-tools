@@ -6,6 +6,12 @@ The format is (loosely) based on [Keep a Changelog](http://keepachangelog.com/) 
 
 ## [Unreleased]
 
+## [v0.2.0] - 2025-10-21
+
+### Added
+
+- Added `load-data` command to load STAC items into the database via the SFEOS STAC API [#2](https://github.com/healy-hyperspatial/sfeos-tools/pull/2)
+
 ## [v0.1.1] - 2025-10-21
 
 ### Changed

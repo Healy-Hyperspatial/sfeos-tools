@@ -28,6 +28,7 @@ CLI tools for managing [stac-fastapi-elasticsearch-opensearch](https://github.co
 - [Commands](#commands)
   - [add-bbox-shape](#add-bbox-shape)
   - [reindex](#reindex)
+  - [load-data](#load-data)
 - [Development](#development)
 - [License](#license)
 
@@ -117,62 +118,55 @@ Options:
 - `--password`: Database password (default: ES_PASS env var)
 - `--yes`: Skip confirmation prompt
 
-Example:
+Examples:
 ```bash
 # Reindex Elasticsearch with custom host and no SSL
-sfeos-tools reindex --backend elasticsearch --host localhost --port 9200 --no-ssl
+sfeos-tools reindex --backend elasticsearch --host localhost --port 9200 --no-ssl --yes
 
 # Reindex OpenSearch with default settings
-sfeos-tools reindex --backend opensearch
+sfeos-tools reindex --backend opensearch --yes
 ```
 
-# Get help for a specific command
-sfeos-tools add-bbox-shape --help
-```
+### load-data
 
-## Commands
-
-### add-bbox-shape
-
-Add `bbox_shape` field to existing collections for spatial search support.
-
-**Basic usage:**
+Load STAC collections and items from local JSON files into a STAC API instance. This command is useful for:
+- Populating a new STAC API deployment with test data
+- Migrating data between STAC API instances
+- Bulk loading STAC collections and items
 
 ```bash
-# Elasticsearch
-sfeos-tools add-bbox-shape --backend elasticsearch
-
-# OpenSearch
-sfeos-tools add-bbox-shape --backend opensearch
+sfeos-tools load-data --base-url <stac-api-url> [options]
 ```
 
-**Connection options:**
+Options:
+- `--base-url`: Base URL of the STAC API (required)
+- `--collection-id`: ID of the collection to create/update (default: test-collection)
+- `--data-dir`: Directory containing collection.json and feature collection files (default: sample_data/)
+- `--use-bulk`: Use bulk insert method for items (faster for large datasets)
 
+**Data Directory Structure:**
+
+Your data directory should contain:
+- `collection.json`: STAC collection definition
+- One or more `.json` files: Feature collections with STAC items
+
+Examples:
 ```bash
-# Local Docker Compose (no SSL)
-sfeos-tools add-bbox-shape --backend elasticsearch --no-ssl
+# Load data from default directory
+sfeos-tools load-data --base-url http://localhost:8080
 
-# Remote server with SSL
-sfeos-tools add-bbox-shape \
-  --backend elasticsearch \
-  --host db.example.com \
-  --port 9200 \
-  --user admin \
-  --password secret
+# Load with custom collection ID and bulk insert
+sfeos-tools load-data \
+  --base-url http://localhost:8080 \
+  --collection-id my-collection \
+  --use-bulk
 
-# Using environment variables
-ES_HOST=my-cluster.cloud.com ES_PORT=9243 ES_USER=elastic ES_PASS=changeme \
-  sfeos-tools add-bbox-shape --backend elasticsearch
+# Load from custom directory
+sfeos-tools load-data \
+  --base-url http://localhost:8080 \
+  --data-dir /path/to/stac/data \
+  --collection-id production-data
 ```
-
-**Available options:**
-
-- `--backend`: Database backend (elasticsearch or opensearch) - **required**
-- `--host`: Database host (default: localhost or ES_HOST env var)
-- `--port`: Database port (default: 9200 or ES_PORT env var)
-- `--use-ssl / --no-ssl`: Use SSL connection (default: true or ES_USE_SSL env var)
-- `--user`: Database username (default: ES_USER env var)
-- `--password`: Database password (default: ES_PASS env var)
 
 ## Development
 
@@ -193,3 +187,6 @@ pre-commit install
 pre-commit run --all-files
 ```
 
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.

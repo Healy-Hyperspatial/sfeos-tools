@@ -3,8 +3,31 @@
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
+from click.testing import CliRunner
 
 from sfeos_tools.bbox_shape import process_collection_bbox_shape, run_add_bbox_shape
+from sfeos_tools.cli import cli
+
+
+def _consume_coroutine(coro):
+    """Helper to consume a coroutine without awaiting it (for mocking asyncio.run)."""
+    try:
+        coro.close()
+    except (StopIteration, RuntimeError, GeneratorExit):
+        pass
+
+
+def _consume_coroutine_with_exception(exception):
+    """Helper that consumes coroutine and raises exception (for error tests)."""
+
+    def _side_effect(coro):
+        try:
+            coro.close()
+        except (StopIteration, RuntimeError, GeneratorExit):
+            pass
+        raise exception
+
+    return _side_effect
 
 
 class TestProcessCollectionBboxShape:
@@ -273,3 +296,230 @@ class TestRunAddBboxShape:
             await run_add_bbox_shape("elasticsearch")
 
         mock_client.close.assert_called_once()
+
+
+class TestCLIAddBboxShape:
+    """Tests for CLI add-bbox-shape command."""
+
+    def test_cli_add_bbox_shape_elasticsearch_success(self):
+        """Test CLI add-bbox-shape command with Elasticsearch backend."""
+        runner = CliRunner()
+
+        with patch(
+            "sfeos_tools.cli.asyncio.run", side_effect=_consume_coroutine
+        ) as mock_asyncio_run:
+            result = runner.invoke(
+                cli,
+                [
+                    "add-bbox-shape",
+                    "--backend",
+                    "elasticsearch",
+                ],
+            )
+
+        assert result.exit_code == 0
+        assert "✓ Migration completed successfully" in result.output
+        mock_asyncio_run.assert_called_once()
+
+    def test_cli_add_bbox_shape_opensearch_success(self):
+        """Test CLI add-bbox-shape command with OpenSearch backend."""
+        runner = CliRunner()
+
+        with patch(
+            "sfeos_tools.cli.asyncio.run", side_effect=_consume_coroutine
+        ) as mock_asyncio_run:
+            result = runner.invoke(
+                cli,
+                [
+                    "add-bbox-shape",
+                    "--backend",
+                    "opensearch",
+                ],
+            )
+
+        assert result.exit_code == 0
+        assert "✓ Migration completed successfully" in result.output
+        mock_asyncio_run.assert_called_once()
+
+    def test_cli_add_bbox_shape_with_connection_options(self):
+        """Test CLI add-bbox-shape command with connection options."""
+        runner = CliRunner()
+
+        with patch("sfeos_tools.cli.asyncio.run") as mock_asyncio_run, patch.dict(
+            "os.environ", {}, clear=True
+        ):
+            result = runner.invoke(
+                cli,
+                [
+                    "add-bbox-shape",
+                    "--backend",
+                    "elasticsearch",
+                    "--host",
+                    "db.example.com",
+                    "--port",
+                    "9200",
+                    "--no-ssl",
+                    "--user",
+                    "admin",
+                    "--password",
+                    "secret",
+                ],
+            )
+
+        assert result.exit_code == 0
+        mock_asyncio_run.assert_called_once()
+
+    def test_cli_add_bbox_shape_missing_backend(self):
+        """Test CLI add-bbox-shape command fails without backend."""
+        runner = CliRunner()
+        result = runner.invoke(cli, ["add-bbox-shape"])
+
+        assert result.exit_code != 0
+        assert "Missing option '--backend'" in result.output
+
+    def test_cli_add_bbox_shape_invalid_backend(self):
+        """Test CLI add-bbox-shape command with invalid backend."""
+        runner = CliRunner()
+        result = runner.invoke(
+            cli,
+            [
+                "add-bbox-shape",
+                "--backend",
+                "invalid",
+            ],
+        )
+
+        assert result.exit_code != 0
+        assert "Invalid value for '--backend'" in result.output
+
+    def test_cli_add_bbox_shape_handles_error(self):
+        """Test CLI add-bbox-shape command handles errors gracefully."""
+        runner = CliRunner()
+
+        with patch(
+            "sfeos_tools.cli.asyncio.run",
+            side_effect=_consume_coroutine_with_exception(
+                Exception("Migration failed")
+            ),
+        ):
+            result = runner.invoke(
+                cli,
+                ["add-bbox-shape", "--backend", "elasticsearch"],
+            )
+
+        assert result.exit_code == 1
+        assert "✗ Migration failed" in result.output
+        assert "Migration failed" in result.output
+
+    def test_cli_add_bbox_shape_handles_ssl_error(self):
+        """Test CLI add-bbox-shape command provides SSL error hint."""
+        runner = CliRunner()
+
+        with patch(
+            "sfeos_tools.cli.asyncio.run",
+            side_effect=_consume_coroutine_with_exception(
+                Exception("TLS verification failed")
+            ),
+        ):
+            result = runner.invoke(
+                cli,
+                ["add-bbox-shape", "--backend", "elasticsearch"],
+            )
+
+        assert result.exit_code == 1
+        assert "✗ Migration failed" in result.output
+        assert "💡 Hint" in result.output
+        assert "--no-ssl" in result.output
+
+    def test_cli_add_bbox_shape_handles_connection_error(self):
+        """Test CLI add-bbox-shape command provides connection error hint."""
+        runner = CliRunner()
+
+        with patch(
+            "sfeos_tools.cli.asyncio.run",
+            side_effect=_consume_coroutine_with_exception(
+                Exception("Connection refused")
+            ),
+        ):
+            result = runner.invoke(
+                cli,
+                ["add-bbox-shape", "--backend", "elasticsearch"],
+            )
+
+        assert result.exit_code == 1
+        assert "✗ Migration failed" in result.output
+        assert "💡 Hint" in result.output
+        assert "database is running" in result.output
+
+    def test_cli_add_bbox_shape_handles_keyboard_interrupt(self):
+        """Test CLI add-bbox-shape command handles keyboard interrupt."""
+        runner = CliRunner()
+
+        with patch(
+            "sfeos_tools.cli.asyncio.run",
+            side_effect=_consume_coroutine_with_exception(KeyboardInterrupt()),
+        ):
+            result = runner.invoke(
+                cli,
+                ["add-bbox-shape", "--backend", "elasticsearch"],
+            )
+
+        assert result.exit_code == 1
+        assert "✗ Migration interrupted by user" in result.output
+
+    def test_cli_add_bbox_shape_sets_env_vars(self):
+        """Test that CLI options are properly set as environment variables."""
+        import os
+
+        runner = CliRunner()
+
+        with patch("sfeos_tools.cli.asyncio.run"), patch.dict(
+            "os.environ", {}, clear=True
+        ):
+            result = runner.invoke(
+                cli,
+                [
+                    "add-bbox-shape",
+                    "--backend",
+                    "elasticsearch",
+                    "--host",
+                    "custom-host",
+                    "--port",
+                    "9300",
+                    "--use-ssl",
+                    "--user",
+                    "testuser",
+                    "--password",
+                    "testpass",
+                ],
+            )
+
+            # Verify environment variables were set
+            assert os.environ["ES_HOST"] == "custom-host"
+            assert os.environ["ES_PORT"] == "9300"
+            assert os.environ["ES_USE_SSL"] == "true"
+            assert os.environ["ES_USER"] == "testuser"
+            assert os.environ["ES_PASS"] == "testpass"
+            assert result.exit_code == 0
+
+    def test_cli_add_bbox_shape_no_ssl_flag(self):
+        """Test that --no-ssl flag sets environment variable correctly."""
+        import os
+
+        runner = CliRunner()
+
+        with patch("sfeos_tools.cli.asyncio.run"), patch.dict(
+            "os.environ", {}, clear=True
+        ):
+            result = runner.invoke(
+                cli,
+                [
+                    "add-bbox-shape",
+                    "--backend",
+                    "elasticsearch",
+                    "--no-ssl",
+                ],
+            )
+
+            assert os.environ["ES_USE_SSL"] == "false"
+            assert result.exit_code == 0

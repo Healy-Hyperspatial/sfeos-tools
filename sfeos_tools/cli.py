@@ -14,7 +14,15 @@ import sys
 
 import click
 
+try:
+    from importlib.metadata import version as _get_version
+except ImportError:
+    from importlib_metadata import version as _get_version  # type: ignore[no-redef]
+
+__version__ = _get_version("sfeos-tools")
+
 from .bbox_shape import run_add_bbox_shape
+from .data_loader import load_items
 from .reindex import run as unified_reindex_run
 
 logging.basicConfig(level=logging.INFO)
@@ -22,7 +30,7 @@ logger = logging.getLogger(__name__)
 
 
 @click.group()
-@click.version_option(version="0.1.0", prog_name="sfeos-tools")
+@click.version_option(version=__version__, prog_name="sfeos-tools")
 def cli():
     """SFEOS Tools - Utilities for managing stac-fastapi-elasticsearch-opensearch deployments."""
     pass
@@ -222,6 +230,48 @@ def reindex(backend, host, port, use_ssl, user, password, yes):
                     fg="yellow",
                 )
             )
+        sys.exit(1)
+
+
+@cli.command("load-data")
+@click.option("--base-url", required=True, help="Base URL of the STAC API")
+@click.option(
+    "--collection-id",
+    default="test-collection",
+    help="ID of the collection to which items are added",
+)
+@click.option("--use-bulk", is_flag=True, help="Use bulk insert method for items")
+@click.option(
+    "--data-dir",
+    type=click.Path(exists=True),
+    default="sample_data/",
+    help="Directory containing collection.json and feature collection file",
+)
+def load_data(base_url: str, collection_id: str, use_bulk: bool, data_dir: str) -> None:
+    """Load STAC items into the database via STAC API.
+
+    This command loads a STAC collection and its items from local JSON files
+    into a STAC API instance. It expects a directory containing:
+    - collection.json: The STAC collection definition
+    - One or more feature collection JSON files with STAC items
+
+    Examples:
+        sfeos-tools load-data --base-url http://localhost:8080
+        sfeos-tools load-data --base-url http://localhost:8080 --collection-id my-collection --use-bulk
+        sfeos-tools load-data --base-url http://localhost:8080 --data-dir /path/to/data
+    """
+    from httpx import Client
+
+    try:
+        with Client(base_url=base_url) as client:
+            load_items(client, collection_id, use_bulk, data_dir)
+        click.echo(click.style("✓ Data loading completed successfully", fg="green"))
+    except KeyboardInterrupt:
+        click.echo(click.style("\n✗ Data loading interrupted by user", fg="yellow"))
+        sys.exit(1)
+    except Exception as e:
+        error_msg = str(e)
+        click.echo(click.style(f"✗ Data loading failed: {error_msg}", fg="red"))
         sys.exit(1)
 
 
