@@ -275,5 +275,83 @@ def load_data(base_url: str, collection_id: str, use_bulk: bool, data_dir: str) 
         sys.exit(1)
 
 
+@cli.command("viewer")
+@click.option(
+    "--stac-url",
+    default="http://localhost:8080",
+    help="STAC API base URL (default: http://localhost:8080)",
+)
+@click.option(
+    "--port",
+    type=int,
+    default=8501,
+    help="Port for the Streamlit viewer (default: 8501)",
+)
+def viewer(stac_url: str, port: int) -> None:
+    """Launch interactive Streamlit viewer for exploring STAC collections and items.
+
+    This command starts a local web-based viewer that allows you to:
+    - Browse STAC collections
+    - View items on an interactive map
+    - Search and filter items
+    - Inspect item metadata
+
+    Examples:
+        sfeos-tools viewer
+        sfeos-tools viewer --stac-url http://localhost:8080
+        sfeos-tools viewer --stac-url https://my-stac-api.com --port 8502
+    """
+    try:
+        import sys
+        from pathlib import Path
+
+        import streamlit.web.cli as stcli
+
+        # Get the path to viewer.py
+        viewer_path = Path(__file__).parent / "viewer.py"
+
+        # Set environment variable for the STAC URL
+        import os
+
+        os.environ["SFEOS_STAC_URL"] = stac_url
+
+        click.echo(click.style("🚀 Starting SFEOS Viewer...", fg="green"))
+        click.echo(click.style(f"📡 STAC API: {stac_url}", fg="cyan"))
+        click.echo(
+            click.style(f"🌐 Viewer will open at: http://localhost:{port}", fg="cyan")
+        )
+        click.echo(click.style("\n💡 Press Ctrl+C to stop the viewer\n", fg="yellow"))
+
+        # Run streamlit
+        sys.argv = [
+            "streamlit",
+            "run",
+            str(viewer_path),
+            "--server.port",
+            str(port),
+            "--server.headless",
+            "true",
+            "--browser.gatherUsageStats",
+            "false",
+        ]
+        sys.exit(stcli.main())
+
+    except ImportError:
+        click.echo(
+            click.style(
+                "✗ Streamlit is not installed. Install with: pip install sfeos-tools[viewer]",
+                fg="red",
+            )
+        )
+        sys.exit(1)
+    except KeyboardInterrupt:
+        click.echo(click.style("\n✓ Viewer stopped", fg="yellow"))
+        sys.exit(0)
+    except Exception as e:
+        error_msg = str(e)
+        click.echo(click.style(f"✗ Failed to start viewer: {error_msg}", fg="red"))
+        sys.exit(1)
+
+
 if __name__ == "__main__":
     cli()

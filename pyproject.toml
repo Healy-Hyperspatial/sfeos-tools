@@ -50,9 +50,20 @@ elasticsearch = [
 opensearch = [
     "stac-fastapi-opensearch>=6.6.0",
 ]
+viewer = [
+    "streamlit>=1.28.0",
+    "folium>=0.14.0",
+    "streamlit-folium>=0.15.0",
+    "pillow>=9.0.0",
+]
 dev = [
     "stac-fastapi-elasticsearch>=6.6.0",
     "stac-fastapi-opensearch>=6.6.0",
+    # Viewer dependencies
+    "streamlit>=1.28.0",
+    "folium>=0.14.0",
+    "streamlit-folium>=0.15.0",
+    "pillow>=9.0.0",
     # Development tools
     "pytest>=6.0",
     "pytest-asyncio>=0.21.0",

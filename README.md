@@ -23,12 +23,14 @@ CLI tools for managing [stac-fastapi-elasticsearch-opensearch](https://github.co
 - [Installation](#installation)
   - [For Elasticsearch](#for-elasticsearch)
   - [For OpenSearch](#for-opensearch)
+  - [For Viewer](#for-viewer)
   - [For Development](#for-development-both-backends)
 - [Usage](#usage)
 - [Commands](#commands)
   - [add-bbox-shape](#add-bbox-shape)
   - [reindex](#reindex)
   - [load-data](#load-data)
+  - [viewer](#viewer)
 - [Development](#development)
 - [License](#license)
 
@@ -54,6 +56,19 @@ pip install sfeos-tools[opensearch]
 Or for local development:
 ```bash
 pip install -e sfeos_tools[opensearch]
+```
+
+### For Viewer
+
+To use the interactive Streamlit viewer:
+
+```bash
+pip install sfeos-tools[viewer]
+```
+
+Or for local development:
+```bash
+pip install -e sfeos_tools[viewer]
 ```
 
 ### For Development (both backends)
@@ -167,6 +182,48 @@ sfeos-tools load-data \
   --data-dir /path/to/stac/data \
   --collection-id production-data
 ```
+
+### viewer
+
+Launch an interactive Streamlit-based web viewer for exploring STAC collections and items. The viewer provides:
+- Interactive map visualization of STAC items
+- Collection browser and selector
+- Item search and filtering
+- Metadata inspection
+- **Asset preview and imagery display**
+- Support for thumbnails, images (JPEG, PNG, TIFF), and other asset types
+
+```bash
+sfeos-tools viewer [options]
+```
+
+Options:
+- `--stac-url`: STAC API base URL (default: http://localhost:8080)
+- `--port`: Port for the Streamlit viewer (default: 8501)
+
+**Requirements:**
+
+The viewer requires additional dependencies. Install with:
+```bash
+pip install sfeos-tools[viewer]
+```
+
+Examples:
+```bash
+# Launch viewer with default settings (connects to http://localhost:8080)
+sfeos-tools viewer
+
+# Connect to a custom STAC API
+sfeos-tools viewer --stac-url https://my-stac-api.com
+
+# Use a different port
+sfeos-tools viewer --port 8502
+
+# Custom STAC API and port
+sfeos-tools viewer --stac-url http://localhost:8080 --port 8502
+```
+
+The viewer will automatically open in your default web browser. Press `Ctrl+C` in the terminal to stop the viewer.
 
 ## Development
 
