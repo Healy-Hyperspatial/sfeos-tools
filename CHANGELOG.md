@@ -6,6 +6,12 @@ The format is (loosely) based on [Keep a Changelog](http://keepachangelog.com/) 
 
 ## [Unreleased]
 
+## [v0.3.0] - 2025-10-24
+
+### Added
+
+- Added `viewer` command to launch interactive Streamlit-based web viewer for exploring STAC collections and items. [#3](https://github.com/healy-hyperspatial/sfeos-tools/pull/3)
+
 ## [v0.2.0] - 2025-10-21
 
 ### Added
@@ -32,7 +38,8 @@ The format is (loosely) based on [Keep a Changelog](http://keepachangelog.com/) 
 
 - Initial release
 
-[Unreleased]: https://github.com/healy-hyperspatial/sfeos-tools/compare/v0.2.0..main
+[Unreleased]: https://github.com/healy-hyperspatial/sfeos-tools/compare/v0.3.0..main
+[v0.3.0]: https://github.com/healy-hyperspatial/sfeos-tools/compare/v0.2.0...v0.3.0
 [v0.2.0]: https://github.com/healy-hyperspatial/sfeos-tools/compare/v0.1.1...v0.2.0
 [v0.1.1]: https://github.com/healy-hyperspatial/sfeos-tools/compare/v0.1.0...v0.1.1
 [v0.1.0]: https://github.com/healy-hyperspatial/sfeos-tools/compare/v0.1.0
