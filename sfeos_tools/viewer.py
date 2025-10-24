@@ -40,25 +40,37 @@ class STACClient:
         collection_id: Optional[str] = None,
         bbox: Optional[List[float]] = None,
         limit: int = 100,
+        q: Optional[str] = None,
     ) -> List[Dict[str, Any]]:
-        """Search for items."""
+        """Search for items using GET requests only.
+
+        Args:
+            collection_id: The collection ID to filter by
+            bbox: Bounding box [minx, miny, maxx, maxy]
+            limit: Maximum number of items to return
+            q: Free text search query
+
+        Returns:
+            List of STAC items matching the search criteria
+        """
         try:
-            # Type the params dict to accept both string and integer values
+            # Initialize params
             params: Dict[str, Union[int, str]] = {"limit": limit}
+
+            # Add collection to params if specified
             if collection_id:
-                # STAC API expects collection as a query parameter, not in the body
                 params["collection"] = str(collection_id)
 
-            body = {}
+            # Add bbox to params if specified
             if bbox:
-                body["bbox"] = bbox
+                params["bbox"] = ",".join(map(str, bbox))
 
-            if body:
-                response = self.client.post(
-                    f"{self.base_url}/search", json=body, params=params
-                )
-            else:
-                response = self.client.get(f"{self.base_url}/search", params=params)
+            # Add q to params if specified
+            if q and q.strip():
+                params["q"] = q.strip()
+
+            # Make GET request
+            response = self.client.get(f"{self.base_url}/search", params=params)
 
             response.raise_for_status()
             data = response.json()
@@ -261,6 +273,9 @@ def run_viewer(base_url: str):
         # Item limit
         item_limit = st.slider("Max Items to Display", 10, 500, 100)
 
+        # Free text search
+        search_query = st.text_input("Search (keywords, properties, etc.)")
+
         # Search button
         search_clicked = st.button("🔍 Search", type="primary", use_container_width=True)
 
@@ -279,9 +294,14 @@ def run_viewer(base_url: str):
                     else selected_collection
                 )
                 items = client.search_items(
-                    collection_id=collection_id, limit=item_limit
+                    collection_id=collection_id,
+                    limit=item_limit,
+                    q=search_query if search_query.strip() else None,
                 )
                 st.session_state.items = items
+
+                if search_query.strip() and not items:
+                    st.info("No items found matching your search query.")
 
         items = st.session_state.get("items", [])
 
