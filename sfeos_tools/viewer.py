@@ -1,6 +1,6 @@
 """Streamlit-based viewer for exploring STAC collections and items."""
 from io import BytesIO
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Union
 
 import httpx
 import streamlit as st
@@ -11,8 +11,8 @@ class STACClient:
 
     def __init__(self, base_url: str):
         """Initialize."""
-        self.base_url = base_url.rstrip("/")
-        self.client = httpx.Client(timeout=30.0)
+        self.base_url: str = base_url.rstrip("/")  # Fixing incompatible type assignment
+        self.client: httpx.Client = httpx.Client(timeout=30.0)
 
     def get_collections(self) -> List[Dict[str, Any]]:
         """Fetch all collections."""
@@ -43,9 +43,11 @@ class STACClient:
     ) -> List[Dict[str, Any]]:
         """Search for items."""
         try:
-            params = {"limit": limit}
+            # Type the params dict to accept both string and integer values
+            params: Dict[str, Union[int, str]] = {"limit": limit}
             if collection_id:
-                params["collections"] = str(collection_id)
+                # STAC API expects collection as a query parameter, not in the body
+                params["collection"] = str(collection_id)
 
             body = {}
             if bbox:
@@ -80,7 +82,7 @@ class STACClient:
 
 def get_asset_urls(item: Dict[str, Any]) -> Dict[str, Dict[str, str]]:
     """Extract asset URLs from a STAC item."""
-    assets = {}
+    assets: Dict[str, Dict[str, str]] = {}
     if not item.get("assets"):
         return assets
 
@@ -197,11 +199,11 @@ def create_map(items: List[Dict[str, Any]]) -> Any:
 
         # Create popup content
         popup_html = f"""
-        <div style="width: 200px;">
-        <b>ID:</b> {item_id}<br>
-        <b>Collection:</b> {collection}<br>
-        </div>
-        """
+<div style="width: 200px;">
+<b>ID:</b> {item_id}<br>
+<b>Collection:</b> {collection}<br>
+</div>
+"""
 
         if geom["type"] == "Point":
             coords = geom["coordinates"]

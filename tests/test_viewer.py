@@ -1,8 +1,6 @@
 """Tests for the viewer module."""
 from unittest.mock import Mock, patch
 
-import pytest
-
 from sfeos_tools.viewer import STACClient
 
 
@@ -111,7 +109,7 @@ class TestSTACClient:
 
         # Test
         client = STACClient("http://localhost:8080")
-        items = client.search_items(collection_id="test-collection", limit=50)
+        client.search_items(collection_id="test-collection", limit=50)
 
         # Should use GET with collection parameter
         call_args = mock_client.get.call_args
@@ -132,7 +130,7 @@ class TestSTACClient:
         # Test
         client = STACClient("http://localhost:8080")
         bbox = [-180, -90, 180, 90]
-        items = client.search_items(bbox=bbox, limit=100)
+        client.search_items(bbox=bbox, limit=100)
 
         # Should use POST when bbox is provided
         call_args = mock_client.post.call_args
