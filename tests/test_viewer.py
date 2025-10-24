@@ -124,7 +124,7 @@ class TestSTACClient:
         mock_response = Mock()
         mock_response.json.return_value = {"features": []}
         mock_client = Mock()
-        mock_client.post.return_value = mock_response
+        mock_client.get.return_value = mock_response
         mock_client_class.return_value = mock_client
 
         # Test
@@ -132,7 +132,8 @@ class TestSTACClient:
         bbox = [-180, -90, 180, 90]
         client.search_items(bbox=bbox, limit=100)
 
-        # Should use POST when bbox is provided
-        call_args = mock_client.post.call_args
+        # Should use GET with bbox as comma-separated string
+        call_args = mock_client.get.call_args
         assert call_args[0][0] == "http://localhost:8080/search"
-        assert call_args[1]["json"]["bbox"] == bbox
+        assert call_args[1]["params"]["bbox"] == "-180,-90,180,90"
+        assert call_args[1]["params"]["limit"] == 100
