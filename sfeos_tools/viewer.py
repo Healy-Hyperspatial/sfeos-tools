@@ -144,6 +144,7 @@ def create_map(items: List[Dict[str, Any]]) -> Any:
     """Create a folium map with items."""
     import folium
     from streamlit_folium import folium_static
+    from folium.plugins import Fullscreen
     
     # Calculate center from items or use default
     if items:
@@ -174,6 +175,14 @@ def create_map(items: List[Dict[str, Any]]) -> Any:
         zoom_start=2 if not items else 6,
         tiles='OpenStreetMap'
     )
+    
+    # Add fullscreen button
+    Fullscreen(
+        position="topright",
+        title="Fullscreen",
+        title_cancel="Exit Fullscreen",
+        force_separate_button=True
+    ).add_to(m)
     
     # Add items to map
     for item in items:
