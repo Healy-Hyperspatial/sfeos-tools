@@ -70,10 +70,7 @@ class STACClient:
                 params["q"] = q.strip()
 
             # Make GET request
-            response = self.client.get(
-                f"{self.base_url}/search",
-                params=params
-            )
+            response = self.client.get(f"{self.base_url}/search", params=params)
             response.raise_for_status()
             data = response.json()
             return data.get("features", [])
