@@ -12,7 +12,7 @@ authors = [
     {name = "CloudFerro S.A."},
     {name = "Healy Hyperspatial"}
 ]
-license = {file = "LICENSE"}
+license = {text = "MIT"}
 maintainers = [
     {name = "Jonathan Healy", email = "jon@healy-hypersaptial.dev"}
 ]
@@ -21,7 +21,6 @@ classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
     "Intended Audience :: Science/Research",
-    "License :: OSI Approved :: MIT License",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
@@ -77,6 +76,11 @@ dev = [
 
 [project.scripts]
 sfeos-tools = "sfeos_tools.cli:cli"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["sfeos_tools*"]
+exclude = ["sample_data*", "tests*"]
 
 [tool.black]
 line-length = 88
