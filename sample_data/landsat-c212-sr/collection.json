@@ -1,0 +1,84 @@
+{
+    "id": "landsat-c2l2-sr",
+    "type": "Collection",
+    "stac_version": "1.0.0",
+    "stac_extensions": [
+        "https://stac-extensions.github.io/view/v1.0.0/schema.json",
+        "https://stac-extensions.github.io/item-assets/v1.0.0/schema.json"
+    ],
+    "title": "Landsat Collection 2 Level-2 UTM Surface Reflectance (SR) Product",
+    "description": "The Landsat Surface Reflectance (SR) product measures the fraction of incoming solar radiation that is reflected from Earth's surface to the Landsat sensor.",
+    "keywords": [
+        "landsat",
+        "landsat 4",
+        "landsat 5",
+        "landsat 7",
+        "landsat 8",
+        "landsat 9",
+        "surface reflectance"
+    ],
+    "extent": {
+        "spatial": {
+            "bbox": [
+                [
+                    -180,
+                    -90,
+                    180,
+                    90
+                ]
+            ]
+        },
+        "temporal": {
+            "interval": [
+                [
+                    "1982-08-22T00:00:00.000Z",
+                    null
+                ]
+            ]
+        }
+    },
+    "providers": [
+        {
+            "name": "U.S. Geological Survey (USGS) Earth Resources Observation and Science (EROS) Center",
+            "roles": [
+                "producer",
+                "processor",
+                "host"
+            ],
+            "url": "https://eros.usgs.gov/"
+        }
+    ],
+    "license": "https://d9-wret.s3.us-west-2.amazonaws.com/assets/palladium/production/s3fs-public/atoms/files/Landsat_Data_Policy.pdf",
+    "summaries": {
+        "platform": [
+            "LANDSAT_4",
+            "LANDSAT_5",
+            "LANDSAT_7",
+            "LANDSAT_8",
+            "LANDSAT_9"
+        ],
+        "view:off_nadir": {
+            "minimum": 0,
+            "maximum": 90
+        }
+    },
+    "item_assets": {},
+    "links": [
+        {
+            "rel": "self",
+            "href": "https://landsatlook.usgs.gov/stac-server/collections/landsat-c2l2-sr"
+        },
+        {
+            "rel": "parent",
+            "href": "https://landsatlook.usgs.gov/stac-server/"
+        },
+        {
+            "rel": "root",
+            "href": "https://landsatlook.usgs.gov/stac-server/"
+        },
+        {
+            "rel": "items",
+            "href": "https://landsatlook.usgs.gov/stac-server/collections/landsat-c2l2-sr/items"
+        }
+    ]
+}
