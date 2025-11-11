@@ -1,13 +1,12 @@
-# SFEOS Tools
-
-CLI tools for managing [stac-fastapi-elasticsearch-opensearch](https://github.com/stac-utils/stac-fastapi-elasticsearch-opensearch) deployments.
-
 <!-- markdownlint-disable MD033 MD041 -->
 
 
 <p align="left">
-  <img src="https://raw.githubusercontent.com/stac-utils/stac-fastapi-elasticsearch-opensearch/refs/heads/main/assets/sfeos.png" width=1000>
+  <img src="https://github.com/Healy-Hyperspatial/sfeos-web/blob/main/sfeos-web/public/assets/sfeos-logo.png">
 </p>
+
+CLI tools for managing [stac-fastapi-elasticsearch-opensearch](https://github.com/stac-utils/stac-fastapi-elasticsearch-opensearch) deployments.
+
 
 <!-- **Jump to:** [Project Introduction](#project-introduction---what-is-sfeos) | [Quick Start](#quick-start) | [Table of Contents](#table-of-contents) -->
 
